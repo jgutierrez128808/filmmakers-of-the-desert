@@ -1,0 +1,15 @@
+{
+  "name": "filmmakers-of-the-desert",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Website for Filmmakers of the Desert",
+  "scripts": {
+    "start": "eleventy --serve",
+    "build": "eleventy",
+    "clean": "rm -rf _site",
+    "debug": "DEBUG=Eleventy* eleventy"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0"
+  }
+}
