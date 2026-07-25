@@ -1,0 +1,249 @@
+# Decap CMS configuration — Filmmakers of the Desert
+# Lives at src/admin/config.yml
+#
+# SETUP NOTE: Replace the entire `backend:` block below with the one
+# DecapBridge generates for you after you create a Site in their dashboard.
+# It contains your site's unique gateway and identity URLs, which can't be
+# guessed. Everything below the backend block is yours to keep.
+
+backend:
+  name: git-gateway
+  repo: YOUR-USERNAME/filmmakers-of-the-desert
+  branch: main
+  identity_url: https://auth.decapbridge.com/sites/REPLACE-WITH-YOUR-SITE-ID
+  gateway_url: https://gateway.decapbridge.com
+  auth_endpoint: oauth
+  commit_messages:
+    login: Login: {{author-name}} <{{author-login}}>
+    create: 'Create {{collection}} "{{slug}}"'
+    update: 'Update {{collection}} "{{slug}}"'
+    delete: 'Delete {{collection}} "{{slug}}"'
+    uploadMedia: 'Upload "{{path}}"'
+    deleteMedia: 'Delete "{{path}}"'
+
+media_folder: "src/images/uploads"
+public_folder: "/images/uploads"
+
+# Editors get a preview link before publishing
+site_url: https://filmmakersofthedesert.com
+display_url: https://filmmakersofthedesert.com
+
+collections:
+  # ---------------------------------------------------------------
+  # Site-wide settings — single file, no create/delete
+  # ---------------------------------------------------------------
+  - name: settings
+    label: Site Settings
+    files:
+      - name: general
+        label: General Info
+        file: "src/_data/site.json"
+        description: >
+          Site-wide info. Changing these updates every page at once.
+        fields:
+          - { name: site_name, label: Site Name, widget: string, default: "Filmmakers of the Desert" }
+          - { name: contact_email, label: Contact Email, widget: string, hint: "The main FOD email address" }
+          - name: role_form_url
+            label: Role Signup Form Link
+            widget: string
+            required: false
+            hint: "Paste the full link to the form people fill out to list their role"
+          - name: meeting_cadence
+            label: Meeting Cadence Line
+            widget: string
+            default: "Last Wednesday of each month"
+            hint: "Shown on the home page under the mission statement"
+          - name: mission
+            label: Mission Statement
+            widget: text
+            hint: "Only change this if the group formally revises the mission"
+          - name: photo_disclosure
+            label: Photo Disclosure Statement
+            widget: text
+            hint: "Shown above the shoot photo gallery on the Community page"
+
+  # ---------------------------------------------------------------
+  # Meetings
+  # ---------------------------------------------------------------
+  - name: meetings
+    label: Meetings
+    label_singular: Meeting
+    folder: "src/content/meetings"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}"
+    summary: "{{date}} — {{location_name}}"
+    sortable_fields: [date]
+    description: >
+      Add one entry per monthly meeting. The soonest upcoming meeting
+      shows automatically on the home page.
+    fields:
+      - { name: date, label: Date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, picker_utc: false }
+      - { name: start_time, label: Start Time, widget: string, hint: "e.g. 7:00 PM" }
+      - { name: location_name, label: Location Name, widget: string, hint: "e.g. Palm Springs Public Library, Community Room" }
+      - { name: address, label: Address, widget: string, required: false }
+      - name: note
+        label: Note
+        widget: text
+        required: false
+        hint: "Anything special about this one — a guest, a screening, a theme"
+      - name: cancelled
+        label: Cancelled
+        widget: boolean
+        default: false
+        hint: "Turn this on instead of deleting, so people who saw the old date know"
+
+  # ---------------------------------------------------------------
+  # Projects
+  # ---------------------------------------------------------------
+  - name: projects
+    label: Projects
+    label_singular: Project
+    folder: "src/content/projects"
+    create: true
+    slug: "{{slug}}"
+    summary: "{{title}}"
+    sortable_fields: [date, title]
+    description: >
+      Films and videos made by the group or its members. Paste the normal
+      YouTube link from your browser — it gets turned into an embedded
+      player automatically.
+    fields:
+      - { name: title, label: Title, widget: string }
+      - name: youtube_url
+        label: YouTube Link
+        widget: string
+        required: false
+        pattern: ['^https?://(www\.)?(youtube\.com|youtu\.be)/.+', "Must be a YouTube link starting with https://"]
+        hint: "Copy the link straight from the YouTube address bar"
+      - { name: date, label: Date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false }
+      - { name: description, label: Description, widget: text, required: false }
+      - name: still
+        label: Still Image
+        widget: image
+        required: false
+        hint: "Optional. Used if there's no YouTube link yet."
+      - name: seeking_collaborators
+        label: Still Looking for Collaborators
+        widget: boolean
+        default: false
+
+  # ---------------------------------------------------------------
+  # Members
+  # ---------------------------------------------------------------
+  - name: members
+    label: Members
+    label_singular: Member
+    folder: "src/content/members"
+    create: true
+    slug: "{{slug}}"
+    summary: "{{name}} — {{role}}"
+    sortable_fields: [name, role]
+    description: >
+      People in the network, grouped on the Community page by role.
+      To add a role that isn't in the dropdown, ask your developer —
+      it's a one-line change.
+    fields:
+      - { name: name, label: Name, widget: string }
+      - name: role
+        label: Primary Role
+        widget: select
+        # PLACEHOLDER LIST — confirm with the founders before launch
+        options:
+          - Director
+          - Producer
+          - Writer
+          - Cinematographer
+          - Camera Operator
+          - Gaffer / Lighting
+          - Sound
+          - Editor
+          - Production Design
+          - Hair & Makeup
+          - Costume
+          - Composer
+          - VFX / Post
+          - Actor
+          - Assistant Director
+          - Script Supervisor
+      - name: other_roles
+        label: Other Roles
+        widget: select
+        multiple: true
+        required: false
+        options:
+          - Director
+          - Producer
+          - Writer
+          - Cinematographer
+          - Camera Operator
+          - Gaffer / Lighting
+          - Sound
+          - Editor
+          - Production Design
+          - Hair & Makeup
+          - Costume
+          - Composer
+          - VFX / Post
+          - Actor
+          - Assistant Director
+          - Script Supervisor
+      - name: contact
+        label: Contact
+        widget: string
+        required: false
+        hint: "Email or a link. Only add what this person agreed to make public."
+      - { name: photo, label: Photo, widget: image, required: false }
+      - { name: bio, label: Short Bio, widget: text, required: false }
+
+  # ---------------------------------------------------------------
+  # Founders
+  # ---------------------------------------------------------------
+  - name: founders
+    label: Founders
+    label_singular: Founder
+    folder: "src/content/founders"
+    create: true
+    slug: "{{slug}}"
+    summary: "{{name}}"
+    description: "Shown on the home page."
+    fields:
+      - { name: name, label: Name, widget: string }
+      - { name: photo, label: Photo, widget: image }
+      - { name: bio, label: Bio, widget: text }
+      - { name: contact, label: Contact, widget: string, required: false }
+      - name: order
+        label: Display Order
+        widget: number
+        value_type: int
+        default: 1
+        hint: "1 shows first, 2 second, and so on"
+
+  # ---------------------------------------------------------------
+  # Photos
+  # ---------------------------------------------------------------
+  - name: photos
+    label: Photos
+    label_singular: Photo
+    folder: "src/content/photos"
+    create: true
+    slug: "{{gallery}}-{{year}}{{month}}{{day}}-{{slug}}"
+    summary: "{{gallery}} — {{caption}}"
+    sortable_fields: [date, gallery]
+    description: >
+      Photos for the Community page galleries. Please get people's OK
+      before posting shots of them.
+    fields:
+      - { name: image, label: Image, widget: image }
+      - name: caption
+        label: Caption
+        widget: string
+        hint: "Also used as the alt text for screen readers, so describe what's happening"
+      - name: gallery
+        label: Gallery
+        widget: select
+        options: [Meetings, Shoots]
+      - { name: date, label: Date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false }
+      - name: credit
+        label: Photo Credit
+        widget: string
+        required: false
