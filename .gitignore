@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Build output
+_site/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Caches
+.cache/
+.eleventy-cache/
+.npm/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
